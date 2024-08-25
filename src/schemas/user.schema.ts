@@ -1,9 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document } from 'mongoose';
 import * as crypto from 'crypto';
 import { ROLE } from 'src/common/const';
 
 @Schema({ timestamps: true })
-export class User {
+export class User extends Document {
   @Prop({ type: Number, required: false, unique: true })
   telegram_id?: number;
 
@@ -40,13 +41,6 @@ export class User {
 
   @Prop({ type: String })
   salt: string;
-
-  validatePassword(password: string): boolean {
-    const hash = crypto
-      .pbkdf2Sync(password, this.salt, 1000, 64, `sha512`)
-      .toString(`hex`);
-    return this.hash === hash;
-  }
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

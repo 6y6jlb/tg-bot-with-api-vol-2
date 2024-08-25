@@ -7,6 +7,7 @@ import { Model } from 'mongoose';
 import * as crypto from 'crypto';
 import { USER_ID_ENUM } from 'src/common/const';
 import { UserError } from 'src/exceptions/User';
+import { FindOneUserDto } from './dto/find-one-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -30,8 +31,9 @@ export class UsersService {
     return this.userModel.find().exec();
   }
 
-  findOne(id: any, idType = USER_ID_ENUM.MONGO_ID): Promise<User> {
-    return this.userModel.findOne({ [idType]: id }).exec();
+  findOne(findOneUserDto: FindOneUserDto): Promise<User> {
+    const { userId, idType } = this.getIdAndTypeFromData(findOneUserDto);
+    return this.userModel.findOne({ [idType]: userId }).exec();
   }
 
   async update(id: any, updateUserDto: UpdateUserDto) {
@@ -51,6 +53,7 @@ export class UsersService {
 
       delete updateUserData.password;
     }
+
     const { userId, idType } = this.getIdAndTypeFromData(updateUserDto);
 
     return await this.userModel.findOneAndUpdate(
@@ -73,7 +76,7 @@ export class UsersService {
     return { salt, hash };
   }
 
-  private getIdAndTypeFromData(data: { [key: string]: any }) {
+  public getIdAndTypeFromData(data: { [key: string]: any }) {
     let userId = null;
     let idType = null;
 

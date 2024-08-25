@@ -10,6 +10,8 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { USER_ID_ENUM } from 'src/common/const';
+import { FindOneUserDto } from './dto/find-one-user.dto';
 
 @Controller('users')
 export class UsersController {
@@ -27,7 +29,9 @@ export class UsersController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.usersService.findOne(id);
+    return this.usersService.findOne({
+      [USER_ID_ENUM.MONGO_ID]: id,
+    } as FindOneUserDto);
   }
 
   @Patch(':id')
