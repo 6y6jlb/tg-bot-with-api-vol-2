@@ -1,19 +1,31 @@
-import { Body, Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { User } from 'src/schemas/user.schema';
+import { Body, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
 import * as crypto from 'crypto';
+import { Model } from 'mongoose';
 import { USER_ID_ENUM } from 'src/common/const';
-import { UserError } from 'src/exceptions/User';
+import { User } from 'src/schemas/user.schema';
+import { CreateUserDto } from './dto/create-user.dto';
 import { FindOneUserDto } from './dto/find-one-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
-  create(@Body() createUserDto: CreateUserDto) {
+  async create(@Body() createUserDto: CreateUserDto) {
+    const existingUser = await this.userModel.findOne({
+      $or: [
+        { email: createUserDto.email },
+        { telegram_id: createUserDto.telegram_id },
+      ],
+    });
+
+    if (existingUser) {
+      throw new NotFoundException(
+        'User with this email or telegram ID already exists',
+      );
+    }
+
     const newUserData = {
       currency: 'USD',
       locale: 'en',
@@ -23,6 +35,8 @@ export class UsersService {
     };
 
     delete newUserData.password;
+
+    console.log(newUserData);
 
     return this.userModel.create(newUserData);
   }
@@ -95,6 +109,6 @@ export class UsersService {
       return { userId, idType };
     }
 
-    throw new UserError('User with this data does not exist!');
+    throw new NotFoundException('User with this data does not exist!');
   }
 }

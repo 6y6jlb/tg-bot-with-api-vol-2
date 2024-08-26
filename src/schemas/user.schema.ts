@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import * as crypto from 'crypto';
 import { ROLE } from 'src/common/const';
 
 @Schema({ timestamps: true })
@@ -55,20 +54,4 @@ UserSchema.pre('save', function (next) {
   } else {
     next();
   }
-});
-
-UserSchema.pre('save', function (next) {
-  if (!this.isModified('hash')) return next();
-
-  crypto.randomBytes(16, (err, salt) => {
-    if (err) return next(err);
-
-    this.salt = salt.toString('hex');
-    crypto.pbkdf2(this.hash, this.salt, 1000, 64, 'sha512', (err, hash) => {
-      if (err) return next(err);
-
-      this.hash = hash.toString('hex');
-      next();
-    });
-  });
 });
