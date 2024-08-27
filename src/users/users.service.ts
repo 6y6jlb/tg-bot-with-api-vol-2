@@ -1,18 +1,21 @@
-import { Body, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import * as crypto from 'crypto';
 import { Model } from 'mongoose';
-import { USER_ID_ENUM } from 'src/common/const';
 import { User } from 'src/schemas/user.schema';
 import { CreateUserDto } from './dto/create-user.dto';
-import { FindOneUserDto } from './dto/find-one-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { getUserIdTypeById } from './helpers/user-id-type.helper';
 
 @Injectable()
 export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
-  async create(@Body() createUserDto: CreateUserDto) {
+  async create(createUserDto: CreateUserDto) {
     const existingUser = await this.userModel.findOne({
       $or: [
         { email: createUserDto.email },
@@ -36,8 +39,6 @@ export class UsersService {
 
     delete newUserData.password;
 
-    console.log(newUserData);
-
     return this.userModel.create(newUserData);
   }
 
@@ -45,9 +46,13 @@ export class UsersService {
     return this.userModel.find().exec();
   }
 
-  findOne(findOneUserDto: FindOneUserDto): Promise<User> {
-    const { userId, idType } = this.getIdAndTypeFromData(findOneUserDto);
-    return this.userModel.findOne({ [idType]: userId }).exec();
+  findOne(userId?: string | number): Promise<User> {
+    if (!userId) {
+      throw new BadRequestException('Request should contain user id');
+    }
+    return this.userModel
+      .findOne({ [getUserIdTypeById(userId)]: userId })
+      .exec();
   }
 
   async update(id: any, updateUserDto: UpdateUserDto) {
@@ -68,19 +73,22 @@ export class UsersService {
       delete updateUserData.password;
     }
 
-    const { userId, idType } = this.getIdAndTypeFromData(updateUserDto);
-
     return await this.userModel.findOneAndUpdate(
-      { [idType]: userId },
+      { [getUserIdTypeById(id)]: id },
       updateUserData,
     );
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async resetPassword(userId: any) {
+    return await this.findOne(userId);
   }
 
-  getPasswordData(password = 'password') {
+  // TODO
+  remove(userId: any) {
+    return `This action removes a #${userId} user`;
+  }
+
+  private getPasswordData(password = 'password') {
     const salt = crypto.randomBytes(16).toString('hex');
 
     const hash = crypto
@@ -88,27 +96,5 @@ export class UsersService {
       .toString(`hex`);
 
     return { salt, hash };
-  }
-
-  public getIdAndTypeFromData(data: { [key: string]: any }) {
-    let userId = null;
-    let idType = null;
-
-    if (data.id || data._id) {
-      userId = data.id || data._id;
-      idType = USER_ID_ENUM.MONGO_ID;
-    } else if (data.telegram_id) {
-      userId = data.telegram_id;
-      idType = USER_ID_ENUM.TELEGRAM_ID;
-    } else if (data.email) {
-      userId = data.email;
-      idType = USER_ID_ENUM.EMAIL;
-    }
-
-    if (userId && idType) {
-      return { userId, idType };
-    }
-
-    throw new NotFoundException('User with this data does not exist!');
   }
 }

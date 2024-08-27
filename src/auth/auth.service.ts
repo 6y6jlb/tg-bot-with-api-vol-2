@@ -5,12 +5,14 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as crypto from 'crypto';
+import { Schema } from 'mongoose';
 import { TOKEN_TYPE } from 'src/common/const';
 import { User } from 'src/schemas/user.schema';
+import { StoreTokenDto } from 'src/token/dto/store-token.dto';
 import { TokenService } from '../token/token.service';
 import { UsersService } from '../users/users.service';
-import { SignInDto } from './dto/sign-in.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { SignInDto } from './dto/sign-in.dto';
 
 @Dependencies(UsersService, JwtService, TokenService)
 @Injectable()
@@ -22,7 +24,7 @@ export class AuthService {
   ) {}
 
   async signIn(signInDto: SignInDto) {
-    const user = await this.usersService.findOne(signInDto);
+    const user = await this.usersService.findOne(signInDto.id);
     if (!this.validateUserPassword(user, signInDto.password)) {
       throw new UnauthorizedException();
     }
@@ -47,7 +49,7 @@ export class AuthService {
       user_id: user._id,
       token_type: TOKEN_TYPE.REFRESH,
       token: refreshToken,
-    });
+    } as StoreTokenDto);
 
     return { access_token: accessToken, refresh_token: refreshToken };
   }
@@ -73,13 +75,15 @@ export class AuthService {
         },
       );
 
-      const storedRefreshToken = await this.tokenService.get({ ...payload });
+      const storedRefreshToken = await this.tokenService.get(payload);
 
       if (!storedRefreshToken) {
         throw new UnauthorizedException('Invalid refresh token');
       }
 
-      const user = await this.usersService.findOne({ ...payload });
+      const user = await this.usersService.findOne(
+        payload._id || payload.email || payload.telegram_id,
+      );
 
       const accessToken = await this.jwtService.signAsync(
         {
@@ -99,30 +103,14 @@ export class AuthService {
     }
   }
 
-  // Logout Method
-  // async logout(user: IUser) {
-  //   if (user._id) {
-  //     await this.usersService.logout({ _id: user._id });
-  //   }
-  // }
+  async logout(userId: Schema.Types.ObjectId) {
+    if (!userId) {
+      return;
+    }
 
-  // // Store User Method
-  // async storeUser(createUserDto: any) {
-  //   try {
-  //     const user = await this.usersService.store(createUserDto);
-  //     return user;
-  //   } catch (error) {
-  //     throw new UnauthorizedException('Failed to create user');
-  //   }
-  // }
-
-  // // Reset Password Method
-  // async resetPassword(resetPasswordDto: any) {
-  //   try {
-  //     const user = await this.usersService.resetPassword(resetPasswordDto);
-  //     return user;
-  //   } catch (error) {
-  //     throw new UnauthorizedException('Failed to reset password');
-  //   }
-  // }
+    await this.tokenService.delete({
+      user_id: userId,
+      token_type: TOKEN_TYPE.REFRESH,
+    });
+  }
 }
