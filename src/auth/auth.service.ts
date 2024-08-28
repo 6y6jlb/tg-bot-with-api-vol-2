@@ -13,14 +13,16 @@ import { TokenService } from '../token/token.service';
 import { UsersService } from '../users/users.service';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { SignInDto } from './dto/sign-in.dto';
+import { ConfigService } from '@nestjs/config';
 
-@Dependencies(UsersService, JwtService, TokenService)
+@Dependencies(UsersService, JwtService, TokenService, ConfigService)
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
     private tokenService: TokenService,
+    private configService: ConfigService,
   ) {}
 
   async signIn(signInDto: SignInDto) {
@@ -36,12 +38,12 @@ export class AuthService {
     };
 
     const accessToken = await this.jwtService.signAsync(payload, {
-      secret: process.env.JWT_SECRET_KEY,
+      secret: this.configService.get<string>('JWT_SECRET_KEY'),
       expiresIn: '5m',
     });
 
     const refreshToken = await this.jwtService.signAsync(payload, {
-      secret: process.env.JWT_SECRET_REFRESH_KEY,
+      secret: this.configService.get<string>('JWT_SECRET_REFRESH_KEY'),
       expiresIn: '7d',
     });
 
@@ -71,7 +73,7 @@ export class AuthService {
       const payload = await this.jwtService.verifyAsync(
         refreshTokenDto.refresh_token,
         {
-          secret: process.env.JWT_SECRET_KEY,
+          secret: this.configService.get<string>('JWT_SECRET_KEY'),
         },
       );
 
@@ -92,7 +94,7 @@ export class AuthService {
           _id: user._id,
         },
         {
-          secret: process.env.JWT_SECRET_KEY,
+          secret: this.configService.get<string>('JWT_SECRET_KEY'),
           expiresIn: '5m',
         },
       );
