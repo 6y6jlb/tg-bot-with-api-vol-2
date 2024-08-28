@@ -19,8 +19,6 @@ export class ExchangeClient {
       `${this.configService.get<string>('OPEN_XHANGE_RATE_BASE_URL')}/latest.json`,
     );
 
-    console.log(url.toString());
-
     url.searchParams.append(
       'app_id',
       this.configService.get<string>('OPEN_XCHANGE_API_KEY'),
@@ -38,7 +36,7 @@ export class ExchangeClient {
       }),
     );
 
-    console.log('XRate successful request.');
+    console.log('Exchange rate successful request.');
 
     return response.data;
   }

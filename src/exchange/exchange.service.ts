@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import dayjs from 'dayjs';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { EXchangeError } from 'src/exceptions/Exchange';
@@ -9,6 +8,7 @@ import {
   IOpeneXChangeRatesLatest,
   IOpeneXChangeRatesLatestGetRate,
 } from './exchange.types';
+import * as moment from 'moment';
 
 @Injectable()
 export class ExchangeService {
@@ -19,8 +19,11 @@ export class ExchangeService {
 
     try {
       result = await this.readFile('exchangeRate.json');
-      if (dayjs().diff(dayjs.unix(result.timestamp), 'hours') >= 4) {
-        result = await this.getFromClientAndWriteToStorage();
+      if (
+        !result.timestamp ||
+        moment().diff(moment.unix(result.timestamp), 'hours') >= 4
+      ) {
+        throw new Error('Should request new rates');
       }
     } catch {
       result = await this.getFromClientAndWriteToStorage();
@@ -43,14 +46,17 @@ export class ExchangeService {
     return +(relation < 0.2 ? relation.toFixed(3) : relation.toFixed(2));
   }
 
-  async getCurrency(): Promise<IOpeneXChangeRatesCurrencies> {
+  async getCurrencies(): Promise<IOpeneXChangeRatesCurrencies> {
     let result: IOpeneXChangeRatesCurrencies;
 
     try {
       result = await this.readFile('currencies.json');
+      if (!Object.values(result).length) {
+        throw new Error('Empty currency file');
+      }
     } catch {
       result = await this.exhangeClient.getCurrencies();
-      await this.saveFile('currencies.json', result.data);
+      await this.saveFile('currencies.json', result);
     }
 
     return result;
@@ -76,7 +82,11 @@ export class ExchangeService {
   private async readFile(filename: string): Promise<any> {
     const filePath = path.join('storage', filename);
 
-    await this.touchFile(filePath, filename);
+    try {
+      await fs.access(filePath);
+    } catch {
+      await this.saveFile(filename, {});
+    }
 
     try {
       const content = await fs.readFile(filePath, 'utf-8');
@@ -84,15 +94,6 @@ export class ExchangeService {
     } catch (error) {
       console.warn(`Failed to read file ${filename}: ${error.message}`);
       throw error;
-    }
-  }
-
-  private async touchFile(filePath: string, filename: string) {
-    try {
-      await fs.access(filePath);
-    } catch {
-      console.warn(`File ${filename} not found, creating new file.`);
-      await this.saveFile(filename, {});
     }
   }
 }

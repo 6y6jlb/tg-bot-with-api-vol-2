@@ -8,7 +8,13 @@ export class ExchangeController {
 
   @HttpCode(HttpStatus.OK)
   @Get('rate')
-  get(@Query() getRateDto: GetRateDto) {
+  getRate(@Query() getRateDto: GetRateDto) {
     return this.exchangeService.getRate(getRateDto);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Get('currencies')
+  getCurrencies() {
+    return this.exchangeService.getCurrencies();
   }
 }
