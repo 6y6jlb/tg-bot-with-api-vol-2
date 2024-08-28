@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
 import { TokenModule } from './token/token.module';
 import { WeatherModule } from './weather/weather.module';
+import { ExchangeModule } from './exchange/exchange.module';
 
 @Module({
   controllers: [AppController],
@@ -28,6 +29,7 @@ import { WeatherModule } from './weather/weather.module';
     }),
     TokenModule,
     WeatherModule,
+    ExchangeModule,
   ],
 })
 export class AppModule {}
