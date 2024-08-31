@@ -9,6 +9,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { TokenModule } from './token/token.module';
 import { WeatherModule } from './weather/weather.module';
 import { ExchangeModule } from './exchange/exchange.module';
+import { RandomModule } from './random/random.module';
 
 @Module({
   controllers: [AppController],
@@ -30,6 +31,7 @@ import { ExchangeModule } from './exchange/exchange.module';
     TokenModule,
     WeatherModule,
     ExchangeModule,
+    RandomModule,
   ],
 })
 export class AppModule {}
