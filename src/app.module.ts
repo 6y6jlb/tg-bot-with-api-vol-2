@@ -6,10 +6,11 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
-import { TokenModule } from './token/token.module';
+import { TokensModule } from './tokens/tokens.module';
 import { WeatherModule } from './weather/weather.module';
 import { ExchangeModule } from './exchange/exchange.module';
 import { RandomModule } from './random/random.module';
+import { TasksModule } from './tasks/tasks.module';
 
 @Module({
   controllers: [AppController],
@@ -28,10 +29,11 @@ import { RandomModule } from './random/random.module';
     JwtModule.register({
       global: true,
     }),
-    TokenModule,
+    TokensModule,
     WeatherModule,
     ExchangeModule,
     RandomModule,
+    TasksModule,
   ],
 })
-export class AppModule {}
+export class AppModule { }

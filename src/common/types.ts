@@ -7,7 +7,7 @@ export interface IUser extends Document {
   email?: string;
   created_at: Date;
   name: string;
-  roles: ROLE[];
+  role: ROLE;
   tz?: string;
   location?: string;
   currency?: string;

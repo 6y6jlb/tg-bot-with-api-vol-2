@@ -1,21 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { TokenError } from 'src/exceptions/Token';
+import { TokensError as TokensError } from 'src/exceptions/Token';
 import { Model } from 'mongoose';
 import { GetTokenDto } from './dto/get-token.dto';
-import { Token } from './entities/token.entity';
+import { Token } from './entities/tokens.entity';
 import { StoreTokenDto } from './dto/store-token.dto';
 import { RemoveTokenDto } from './dto/remove-token.dto';
 
 @Injectable()
-export class TokenService {
+export class TokensService {
   constructor(@InjectModel(Token.name) private tokenModel: Model<Token>) {}
 
   async get(getTokenDto: GetTokenDto) {
     if (getTokenDto.user_id && getTokenDto.token_type) {
       return await this.tokenModel.findOne(getTokenDto);
     }
-    throw new TokenError(
+    throw new TokensError(
       'Token can not be find, data incorrect: ' + JSON.stringify(getTokenDto),
     );
   }
@@ -28,7 +28,7 @@ export class TokenService {
       });
       return await this.tokenModel.create(storeTokenDto);
     }
-    throw new TokenError(
+    throw new TokensError(
       'Token can not be stored, data incorrect: ' +
         JSON.stringify(storeTokenDto),
     );
@@ -38,7 +38,7 @@ export class TokenService {
     if (removeTokenDto.user_id && removeTokenDto.token_type) {
       return await this.tokenModel.findOneAndDelete(removeTokenDto);
     }
-    throw new TokenError(
+    throw new TokensError(
       'Token can not be removed, data incorrect: ' +
         JSON.stringify(removeTokenDto),
     );

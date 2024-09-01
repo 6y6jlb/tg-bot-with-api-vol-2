@@ -8,22 +8,22 @@ import * as crypto from 'crypto';
 import { Schema } from 'mongoose';
 import { TOKEN_TYPE } from 'src/common/const';
 import { User } from 'src/schemas/user.schema';
-import { StoreTokenDto } from 'src/token/dto/store-token.dto';
-import { TokenService } from '../token/token.service';
+import { StoreTokenDto } from 'src/tokens/dto/store-token.dto';
+import { TokensService } from '../tokens/tokens.service';
 import { UsersService } from '../users/users.service';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { SignInDto } from './dto/sign-in.dto';
 import { ConfigService } from '@nestjs/config';
 
-@Dependencies(UsersService, JwtService, TokenService, ConfigService)
+@Dependencies(UsersService, JwtService, TokensService, ConfigService)
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
-    private tokenService: TokenService,
+    private tokenService: TokensService,
     private configService: ConfigService,
-  ) {}
+  ) { }
 
   async signIn(signInDto: SignInDto) {
     const user = await this.usersService.findOne(signInDto.id);

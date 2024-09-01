@@ -17,11 +17,11 @@ export class User extends Document {
   name?: string;
 
   @Prop({
-    type: [String],
+    type: String,
     enum: Object.values(ROLE),
-    default: [ROLE.CUSTOMER],
+    default: ROLE.CUSTOMER,
   })
-  roles: ROLE[];
+  role: ROLE;
 
   @Prop({ type: String, required: false })
   tz?: string;
@@ -45,10 +45,6 @@ export class User extends Document {
 export const UserSchema = SchemaFactory.createForClass(User);
 
 UserSchema.pre('save', function (next) {
-  if (!(this.roles && this.roles.length)) {
-    this.roles = [ROLE.CUSTOMER];
-  }
-
   if (!this.email && !this.telegram_id) {
     next(new Error('Either email or telegram_id must be set'));
   } else {
