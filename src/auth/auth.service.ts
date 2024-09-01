@@ -23,7 +23,7 @@ export class AuthService {
     private jwtService: JwtService,
     private tokenService: TokensService,
     private configService: ConfigService,
-  ) { }
+  ) {}
 
   async signIn(signInDto: SignInDto) {
     const user = await this.usersService.findOne(signInDto.id);
@@ -34,6 +34,7 @@ export class AuthService {
     const payload = {
       email: user.email || '',
       telegram_id: user.telegram_id || '',
+      role: user.role,
       _id: user._id,
     };
 
@@ -91,6 +92,7 @@ export class AuthService {
         {
           email: user.email,
           telegram_id: user.telegram_id,
+          role: user.role,
           _id: user._id,
         },
         {

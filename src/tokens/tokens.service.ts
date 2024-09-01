@@ -3,13 +3,13 @@ import { InjectModel } from '@nestjs/mongoose';
 import { TokensError as TokensError } from 'src/exceptions/Token';
 import { Model } from 'mongoose';
 import { GetTokenDto } from './dto/get-token.dto';
-import { Token } from './entities/tokens.entity';
+import { Tokens } from './entities/tokens.entity';
 import { StoreTokenDto } from './dto/store-token.dto';
 import { RemoveTokenDto } from './dto/remove-token.dto';
 
 @Injectable()
 export class TokensService {
-  constructor(@InjectModel(Token.name) private tokenModel: Model<Token>) {}
+  constructor(@InjectModel(Tokens.name) private tokenModel: Model<Tokens>) {}
 
   async get(getTokenDto: GetTokenDto) {
     if (getTokenDto.user_id && getTokenDto.token_type) {

@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TokensService as TokensService } from './tokens.service';
-import { Token as Tokens } from './entities/tokens.entity';
+import { Tokens as Tokens } from './entities/tokens.entity';
 import { TokenSchema } from 'src/schemas/token.schema';
 import { MongooseModule } from '@nestjs/mongoose';
 
