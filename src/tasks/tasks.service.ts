@@ -10,23 +10,24 @@ import { GetTaskDto } from './dto/get-task.dto';
 export class TasksService {
   constructor(@InjectModel(Tasks.name) private taskModel: Model<Tasks>) {}
 
-  create(createTaskDto: CreateTaskDto) {
-    return 'This action adds a new task';
+  async create(createTaskDto: CreateTaskDto) {
+    return await this.taskModel.create(createTaskDto);
   }
 
-  findAll(getTaskDto: GetTaskDto) {
-    return this.taskModel.find(getTaskDto);
+  async findAll(getTaskDto: GetTaskDto) {
+    console.log('fing all');
+    return await this.taskModel.find(getTaskDto);
   }
 
-  findOne(id: Types.ObjectId, getTaskDto: GetTaskDto) {
-    return this.taskModel.findById(id, getTaskDto);
+  async findOne(id: Types.ObjectId, getTaskDto: GetTaskDto) {
+    return await this.taskModel.findById(id, getTaskDto, { new: true });
   }
 
-  update(id: Types.ObjectId, updateTaskDto: UpdateTaskDto) {
-    return `This action updates a #${id} task`;
+  async update(id: Types.ObjectId, updateTaskDto: UpdateTaskDto) {
+    return await this.taskModel.findByIdAndUpdate(id, updateTaskDto);
   }
 
-  remove(id: Types.ObjectId) {
-    return `This action removes a #${id} task`;
+  async remove(id: Types.ObjectId) {
+    return await this.taskModel.findByIdAndDelete(id);
   }
 }

@@ -17,7 +17,9 @@ import { ROLE } from 'src/common/const';
 import { GetTaskDto } from './dto/get-task.dto';
 import { Types } from 'mongoose';
 import { RolesGuard } from 'src/auth/roles/roles.guard';
+import { AuthGuard } from 'src/auth/auth.guard';
 
+@UseGuards(AuthGuard)
 @Controller('tasks')
 export class TasksController {
   constructor(private readonly tasksService: TasksService) {}

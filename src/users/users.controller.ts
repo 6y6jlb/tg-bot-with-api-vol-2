@@ -6,13 +6,18 @@ import {
   Param,
   Post,
   Put,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
+import { RolesGuard } from 'src/auth/roles/roles.guard';
+import { Roles } from 'src/auth/roles/roles.decorator';
+import { ROLE } from 'src/common/const';
 
+@UseGuards(AuthGuard)
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
@@ -27,7 +32,8 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
-  @UseGuards(AuthGuard)
+  @Roles(ROLE.ADMIN)
+  @UseGuards(RolesGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.usersService.findOne(id);
@@ -38,13 +44,14 @@ export class UsersController {
     return this.usersService.update(id, updateUserDto);
   }
 
+  @Roles(ROLE.ADMIN)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.usersService.remove(id);
   }
 
-  @Delete(':id')
-  resetPassword(@Param('id') id: string) {
-    return this.usersService.remove(id);
+  @Delete('password_reset')
+  resetPassword(@Req() request: Request) {
+    return this.usersService.resetPassword(request['user'].id);
   }
 }
