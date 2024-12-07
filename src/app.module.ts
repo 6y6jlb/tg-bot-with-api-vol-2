@@ -19,10 +19,21 @@ import { TasksModule } from './tasks/tasks.module';
     ConfigModule.forRoot(),
     UsersModule,
     MongooseModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        uri: `mongodb+srv://${configService.get('MONGO_ATLAS_USER')}:${configService.get('MONGO_ATLAS_PASS')}@${configService.get('MONGO_ATLASS_NAME')}.n2dmfie.mongodb.net/?retryWrites=true&w=majority`,
-      }),
+      imports: [ConfigModule.forRoot()],
+      useFactory: (configService: ConfigService) => {
+        const user = configService.get<string>('MONGO_ATLAS_USER');
+        const pass = configService.get<string>('MONGO_ATLAS_PASS');
+        const name = configService.get<string>('MONGO_ATLAS_NAME');
+
+        if (!user || !pass || !name) {
+          throw new Error(
+            'One or more MongoDB configuration variables are missing!',
+          );
+        }
+        return {
+          uri: `mongodb+srv://${user}:${pass}@${name}.n2dmfie.mongodb.net/?retryWrites=true&w=majority`,
+        };
+      },
       inject: [ConfigService],
     }),
     AuthModule,
