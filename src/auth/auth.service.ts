@@ -40,7 +40,7 @@ export class AuthService {
 
     const accessToken = await this.jwtService.signAsync(payload, {
       secret: this.configService.get<string>('JWT_SECRET_KEY'),
-      expiresIn: '5m',
+      expiresIn: '15m',
     });
 
     const refreshToken = await this.jwtService.signAsync(payload, {
@@ -74,11 +74,14 @@ export class AuthService {
       const payload = await this.jwtService.verifyAsync(
         refreshTokenDto.refresh_token,
         {
-          secret: this.configService.get<string>('JWT_SECRET_KEY'),
+          secret: this.configService.get<string>('JWT_SECRET_REFRESH_KEY'),
         },
       );
 
-      const storedRefreshToken = await this.tokenService.get(payload);
+      const storedRefreshToken = await this.tokenService.get({
+        user_id: payload._id,
+        token_type: TOKEN_TYPE.REFRESH,
+      });
 
       if (!storedRefreshToken) {
         throw new UnauthorizedException('Invalid refresh token');
