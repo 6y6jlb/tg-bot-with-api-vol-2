@@ -12,6 +12,7 @@ import { ExchangeModule } from './exchange/exchange.module';
 import { RandomModule } from './random/random.module';
 import { TasksModule } from './tasks/tasks.module';
 import { MeModule } from './me/me.module';
+import { TelegramModule } from './telegram/telegram.module';
 
 @Module({
   controllers: [AppController],
@@ -47,6 +48,7 @@ import { MeModule } from './me/me.module';
     RandomModule,
     TasksModule,
     MeModule,
+    TelegramModule,
   ],
 })
 export class AppModule {}
