@@ -11,6 +11,7 @@ import { WeatherModule } from './weather/weather.module';
 import { ExchangeModule } from './exchange/exchange.module';
 import { RandomModule } from './random/random.module';
 import { TasksModule } from './tasks/tasks.module';
+import { MeModule } from './me/me.module';
 
 @Module({
   controllers: [AppController],
@@ -45,6 +46,7 @@ import { TasksModule } from './tasks/tasks.module';
     ExchangeModule,
     RandomModule,
     TasksModule,
+    MeModule,
   ],
 })
 export class AppModule {}
