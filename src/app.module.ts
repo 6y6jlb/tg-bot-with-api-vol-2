@@ -13,6 +13,8 @@ import { RandomModule } from './random/random.module';
 import { TasksModule } from './tasks/tasks.module';
 import { MeModule } from './me/me.module';
 import { TelegramModule } from './telegram/telegram.module';
+import { I18nModule } from 'nestjs-i18n';
+import * as path from 'path';
 
 @Module({
   controllers: [AppController],
@@ -40,6 +42,13 @@ import { TelegramModule } from './telegram/telegram.module';
     TasksModule,
     MeModule,
     TelegramModule,
+    I18nModule.forRoot({
+      fallbackLanguage: 'en',
+      loaderOptions: {
+        path: path.join(__dirname, '/i18n/'),
+        watch: true,
+      },
+    }),
   ],
 })
 export class AppModule {}

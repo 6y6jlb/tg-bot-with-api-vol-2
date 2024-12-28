@@ -1,0 +1,127 @@
+{
+    "your-name-is": "Тебя зовут - {{name}}",
+    "guest": "Гость",
+    "tasks": {
+        "reset-with-delete-task-description": "Вы можете указать еще одну задачу или выйти из режима удаления задач нажав на эту кнопку.",
+        "info-title": "Существующие задачи:",
+        "info-line": "\n\nID: {{taskId}},\nПользователь: {{userId}},\nБудет вызвана в: {{date}},\n{{regular_desctription}}\n",
+        "event-line": "\nТип задачи: {{event}},\nОпция: {{options}},",
+        "description-time": "Введите время в формате 02:22",
+        "description-timezone": "Почитать про таймзоны можно тут\n<a href='https://en.wikipedia.org/wiki/List_of_tz_database_time_zones'>ССылка на википедию</a>",
+        "description-type": "Выберите тип задачи.",
+        "description-weather": "Введите время, название населенного пункта\nи таймзону в формате:\n<b>02:22 - Батуми - asia/tbilisi</b>",
+        "description-reminder": "Введите время, сообщение\nи таймзону в формате:\n<b>2:22 - Мое сообщенение здесь - asia/tbilisi</b>",
+        "description-exchange": "Введите время, валютную пару\nи таймзону в формате:\n<b>02:22 - usd rub - asia/tbilisi</b>",
+        "options": {
+            "weather": "Укажите город",
+            "reminder": "Укажите сообщение",
+            "exchange": "Укажите валютную пару в формате (usd rub)"
+        },
+        "reqular": {
+            "true": "Регулярная задача",
+            "false": "Не регулярная задача"
+        },
+        "update": {
+            "make-regular-description": "Сделать задачу регулярной?",
+            "options": "Вы можете выбрать дополнительные параметры для задачи",
+            "success": "Задача была сохранена",
+            "error": "Что-то случилось, повторите попытку позже"
+        },
+        "store": {
+            "success": "Задача с типом {{eventType}} была сохранена",
+            "error": "Что-то случилось, повторите попытку позже"
+        },
+        "delete": {
+            "success": "Задача была удалена",
+            "error": "Что-то случилось, повторите попытку позже"
+        }
+    },
+    "weather": {
+        "reset-with-description": "Вы можете указать еще один город или выйти из режима запроса погоды нажав на эту кнопку.",
+        "get-description": "Для получени погоды введите город на русском или английском языке.",
+        "tg-string": "Город: {{city}},\nТемпература: {{temp}}{{sign}},\nОщущается как: {{feel}},\nВлажность: {{humidity}}\n{{description}} и скорость ветра: {{windSpeed}}\nАтмосферное давление: {{pressure}} мм.рт.ст."
+    },
+    "exchange": {
+        "change": "Укажите валюту валюту курс которой хотите получить.",
+        "reset-with-description": "Вы можете указать еще одну пару в таком же формате или выйти нажав на кнопку внизу.",
+        "format-example": "Пример: 100 USD RUB",
+        "currencies": "Валюты",
+        "currency-list": "Список валют",
+        "rate": "Текущий курс {{count}} {{target}}: {{rate}} в {{current}}."
+    },
+    "web_app": {
+        "desctiption": "В приложение"
+    },
+    "settings": {
+        "update-title": "Выберите настройку которую хотите обновить.",
+        "update-succesfully": "Обновленно!",
+        "params": {
+            "language": {
+                "title": "Выберите язык",
+                "ru": "Русский",
+                "en": "Английский"
+            }
+        }
+    },
+    "actions": {
+        "greeting": "Привет",
+        "info": "Информация по пользователю: {{userId}}\nИмя:{{name}}\nДата создания:{{createdAt}}\nЯзык:{{lang}}\nТаймзона:{{tz}}",
+        "reset": {
+            "description": "Параментры приложения были сброшены!"
+        },
+        "tasks": {
+            "delete-description": "Чтобы удалить задачу выберите ее ID!",
+            "update-description": "Чтобы изменить задачу выберите ее ID!",
+            "remove-option-description": "Чтобы удалить подздаачу выберите нужный пункт"
+        },
+        "undefined": {
+            "description": "Я не понимаю команду!"
+        }
+    },
+    "buttons": {
+        "language": "Язык",
+        "ru": "Русский",
+        "en": "Английский",
+        "yes": "Да",
+        "no": "Нет",
+        "fill-form": "Заполните форму",
+        "open-app": "Открыть приложение",
+        "currencies": "Валюты",
+        "weather": "Запрос погоды",
+        "event-reminder": "Событие(напоминание)",
+        "event-weather": "Событие(погода)",
+        "event-exchange": "Событие(обмен)",
+        "event-options": "Дополнительные параметры к задаче",
+        "remove-option": "Удаление подзадачи",
+        "profile": "Профайл",
+        "reset": "Сброс",
+        "tasks-new": "Новая задача",
+        "tasks-delete": "Удаление задачи",
+        "tasks-update": "Изменение задачи",
+        "tasks-type-reminder": "Напоминание",
+        "tasks-type-weather": "Погода",
+        "tasks-type-exchange": "Обменнный курс"
+    },
+    "notifications": {
+        "common": {
+            "start": "Server started at: {{date}}",
+            "new-user": "New user with {{userId}} was created. First name is {{userName}}"
+        },
+        "errors": {
+            "something-went-wrong": "Что-то пошло не по плану",
+            "cant-understand": "Я тебя не понимаю.. давай попробуем еще раз"
+        }
+    },
+    "callback": {
+        "request": "Чего изволите?"
+    },
+    "random": {
+        "get-image": "Случайное изображение"
+    },
+    "feedback": {
+        "portfolio": {
+            "template-tg": "<b>Портфолио обратная связь:</b>\nОтправитель: {{name}},\nКонтакты: {{contacts}},\nТело:{{message}}",
+            "template-email": "<b>Портфолио обратная связь:</b><br>Отправитель: {{name}},<br>Контакты: {{contacts}},<br>Тело:{{message}}"
+        }
+    }
+}
