@@ -23,17 +23,8 @@ import { TelegramModule } from './telegram/telegram.module';
     MongooseModule.forRootAsync({
       imports: [ConfigModule.forRoot()],
       useFactory: (configService: ConfigService) => {
-        const user = configService.get<string>('MONGO_ATLAS_USER');
-        const pass = configService.get<string>('MONGO_ATLAS_PASS');
-        const name = configService.get<string>('MONGO_ATLAS_NAME');
-
-        if (!user || !pass || !name) {
-          throw new Error(
-            'One or more MongoDB configuration variables are missing!',
-          );
-        }
         return {
-          uri: `mongodb+srv://${user}:${pass}@${name}.n2dmfie.mongodb.net/?retryWrites=true&w=majority`,
+          uri: `mongodb+srv://${configService.getOrThrow<string>('MONGO_ATLAS_USER')}:${configService.getOrThrow<string>('MONGO_ATLAS_PASS')}@${configService.getOrThrow<string>('MONGO_ATLAS_NAME')}.n2dmfie.mongodb.net/?retryWrites=true&w=majority`,
         };
       },
       inject: [ConfigService],

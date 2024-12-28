@@ -1,10 +1,15 @@
-import { Command, Ctx, Help, On, Start, Update } from 'nestjs-telegraf';
-// import { TelegrafContext } from './common/interfaces/telegraf-context.interface.ts';
+import { Command, Ctx, Help, InjectBot, Start, Update } from 'nestjs-telegraf';
+import { Context, Telegraf } from 'telegraf';
+import { SCENES } from './telegram.const';
 import { TelegramService } from './telegram.service';
+import { SceneContext } from 'telegraf/typings/scenes';
 
 @Update()
 export class TelegramUpdate {
-  constructor(private readonly telegramService: TelegramService) {}
+  constructor(
+    private readonly telegramService: TelegramService,
+    @InjectBot() private readonly bot: Telegraf<Context>,
+  ) {}
 
   @Start()
   async onStart(@Ctx() ctx: any) {
@@ -25,9 +30,16 @@ export class TelegramUpdate {
     await ctx.reply(`Echo: ${text}`);
   }
 
-  @On('text')
-  async onText(@Ctx() ctx: any) {
-    const response = this.telegramService.processText(ctx.message.text);
-    await ctx.reply(response);
+  @Command('weather')
+  async registerUserScene(@Ctx() ctx: SceneContext): Promise<any> {
+    try {
+      console.log('weather scene');
+      console.log(ctx);
+      await ctx.scene.enter(SCENES.WEATHER, {
+        // additionalParams
+      });
+    } catch (error) {
+      console.warn('ERROR registerUserScene enter :::', error.message);
+    }
   }
 }
