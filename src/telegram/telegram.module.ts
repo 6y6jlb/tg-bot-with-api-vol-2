@@ -5,9 +5,13 @@ import { TelegramService } from './telegram.service';
 import { TelegramUpdate } from './telegram.update';
 import { WeatherScene } from './scenes/weather.scene';
 import { session } from 'telegraf';
+import { WeatherService } from 'src/weather/weather.service';
+import { WeatherClient } from 'src/weather/weather.client';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [
+    HttpModule,
     ConfigModule,
     TelegrafModule.forRootAsync({
       imports: [ConfigModule.forRoot()],
@@ -18,6 +22,12 @@ import { session } from 'telegraf';
       inject: [ConfigService],
     }),
   ],
-  providers: [TelegramService, TelegramUpdate, WeatherScene],
+  providers: [
+    TelegramService,
+    TelegramUpdate,
+    WeatherScene,
+    WeatherService,
+    WeatherClient,
+  ],
 })
 export class TelegramModule {}

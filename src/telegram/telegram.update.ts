@@ -33,8 +33,6 @@ export class TelegramUpdate {
   @Command('weather')
   async registerUserScene(@Ctx() ctx: SceneContext): Promise<any> {
     try {
-      console.log('weather scene');
-      console.log(ctx);
       await ctx.scene.enter(SCENES.WEATHER, {
         // additionalParams
       });

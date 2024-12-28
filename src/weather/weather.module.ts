@@ -9,5 +9,6 @@ import { ConfigModule } from '@nestjs/config';
   imports: [HttpModule, ConfigModule.forRoot()],
   providers: [WeatherService, WeatherClient],
   controllers: [WeatherController],
+  exports: [WeatherService, WeatherClient],
 })
 export class WeatherModule {}
