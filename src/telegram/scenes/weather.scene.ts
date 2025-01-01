@@ -4,17 +4,26 @@ import { Markup } from 'telegraf';
 import { SceneContext } from 'telegraf/typings/scenes';
 import { SCENES } from '../telegram.const';
 import { WeatherService } from 'src/weather/weather.service';
+import { I18nService } from 'nestjs-i18n';
 
 @Injectable()
 @Scene(SCENES.WEATHER)
 export class WeatherScene {
-  constructor(private readonly weatherService: WeatherService) {}
+  constructor(
+    private readonly weatherService: WeatherService,
+    private readonly i18n: I18nService,
+  ) {}
 
   @SceneEnter()
   async weatherEnter(@Ctx() ctx: SceneContext) {
     await ctx.replyWithHTML(
-      'Для получени погоды введите город на русском или английском языке.',
-      Markup.inlineKeyboard([Markup.button.callback('вернуться', 'reset')]),
+      this.i18n.t('weather.request-hint', { lang: 'ru' }),
+      Markup.inlineKeyboard([
+        Markup.button.callback(
+          this.i18n.t('common.action.reset', { lang: 'ru' }),
+          'reset',
+        ),
+      ]),
     );
   }
 
@@ -27,6 +36,7 @@ export class WeatherScene {
   @On('text')
   async onCityInput(@Ctx() ctx: any) {
     const city = ctx.message.text ?? '';
+
     if (!city) {
       await ctx.replyWithHTML(
         'Пожалуйста, введите корректное название города.',

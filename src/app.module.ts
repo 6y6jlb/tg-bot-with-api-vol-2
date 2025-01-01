@@ -13,7 +13,13 @@ import { RandomModule } from './random/random.module';
 import { TasksModule } from './tasks/tasks.module';
 import { MeModule } from './me/me.module';
 import { TelegramModule } from './telegram/telegram.module';
-import { I18nModule } from 'nestjs-i18n';
+import {
+  AcceptLanguageResolver,
+  CookieResolver,
+  HeaderResolver,
+  I18nModule,
+  QueryResolver,
+} from 'nestjs-i18n';
 import * as path from 'path';
 
 @Module({
@@ -42,12 +48,20 @@ import * as path from 'path';
     TasksModule,
     MeModule,
     TelegramModule,
-    I18nModule.forRoot({
-      fallbackLanguage: 'en',
-      loaderOptions: {
-        path: path.join(__dirname, '/i18n/'),
-        watch: true,
-      },
+    I18nModule.forRootAsync({
+      useFactory: () => ({
+        fallbackLanguage: 'en',
+        loaderOptions: {
+          path: path.join(__dirname, '/i18n/'),
+          watch: true,
+        },
+      }),
+      resolvers: [
+        new QueryResolver(['lang', 'l']),
+        new HeaderResolver(['x-custom-lang']),
+        new CookieResolver(),
+        AcceptLanguageResolver,
+      ],
     }),
   ],
 })
