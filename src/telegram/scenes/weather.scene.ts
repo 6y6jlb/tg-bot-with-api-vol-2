@@ -5,6 +5,7 @@ import { SceneContext } from 'telegraf/typings/scenes';
 import { SCENES } from '../telegram.const';
 import { WeatherService } from 'src/weather/weather.service';
 import { I18nService } from 'nestjs-i18n';
+import { TEMPERATURE_SIGN, OPEN_WEATHER_UNITS } from 'src/weather/wather.const';
 
 @Injectable()
 @Scene(SCENES.WEATHER)
@@ -12,7 +13,7 @@ export class WeatherScene {
   constructor(
     private readonly weatherService: WeatherService,
     private readonly i18n: I18nService,
-  ) {}
+  ) { }
 
   @SceneEnter()
   async weatherEnter(@Ctx() ctx: SceneContext) {
@@ -29,7 +30,9 @@ export class WeatherScene {
 
   @Action('reset')
   async reset(@Ctx() ctx: SceneContext) {
-    await ctx.replyWithHTML('Параметры приложения были сброшены.');
+    await ctx.replyWithHTML(
+      this.i18n.t('common.notification.app-reset', { lang: 'ru' }),
+    );
     await ctx.scene.leave();
   }
 
@@ -39,23 +42,43 @@ export class WeatherScene {
 
     if (!city) {
       await ctx.replyWithHTML(
-        'Пожалуйста, введите корректное название города.',
+        this.i18n.t('weather.exception.wrong-city', { lang: 'ru' }),
       );
       return;
     }
 
     try {
       const weather = await this.weatherService.getWeather({ city: city });
-      await ctx.replyWithHTML(`Погода в городе <b>${city}</b>:\n${weather}`);
-      await ctx.scene.leave();
+
+      const payload = {
+        lang: 'ru',
+        args: {
+          city: weather.name,
+          temp: Math.ceil(Number(weather.main.temp)),
+          feel: Math.ceil(Number(weather.main.feels_like)),
+          humidity: weather.main.humidity,
+          sign: TEMPERATURE_SIGN[weather.units as OPEN_WEATHER_UNITS],
+          windSpeed: weather.wind.speed,
+          description: weather.weather[0].description,
+          pressure: weather.main.pressure,
+          escapeValue: false,
+        },
+      };
+
+      if (weather.icon) {
+        await ctx.replyWithPhoto(
+          { url: weather.icon },
+          { caption: this.i18n.t('weather.forecast-brief', payload) },
+        );
+      } else {
+        await ctx.replyWithHTML(this.i18n.t('weather.forecast-brief', payload));
+      }
+      await ctx.scene.reenter();
     } catch (error: any) {
+      console.warn(error.message);
       await ctx.replyWithHTML(
-        `Не удалось получить данные о погоде для города <b>${city}</b>. Пожалуйста, проверьте название города и попробуйте снова. :::${error.message}`,
+        this.i18n.t('weather.exception.wrong-city', { lang: 'ru' }),
       );
     }
-  }
-
-  private async getWeatherForCity(city: string): Promise<string> {
-    return `${city}::: Температура: 25°C, Солнечно`;
   }
 }

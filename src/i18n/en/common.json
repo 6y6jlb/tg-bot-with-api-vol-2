@@ -1,5 +1,8 @@
 {
     "action": {
         "reset": "Reset"
+    },
+    "notification": {
+        "app-reset": "app data was reset"
     }
 }

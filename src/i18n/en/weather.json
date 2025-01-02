@@ -1,3 +1,7 @@
 {
-    "request-hint": "To get the weather, enter the city in Russian or English."
+    "request-hint": "To get the weather, enter the city in Russian or English.",
+        "forecast-brief": "City: {city},\nTemp: {temp}{sign},\nFeels like: {feel}{sign},\nHumidity: {humidity}\n{description} and wind speed: {windSpeed}\nPressure: {pressure} mmHg.",
+    "exception": {
+        "wrong-city": "Wrong city name"
+    }
 }
